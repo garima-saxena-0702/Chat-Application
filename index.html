@@ -13,27 +13,30 @@
       #messages li:nth-child(odd) { background: #eee; }
     </style>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-      var socket = io();
-      function sendChat(e) {
-        e.preventDefault(); // prevents page reloading
-        socket.emit('chat message', document.getElementById('m').value);
-        document.getElementById('m').value = '';
-        return;
-      }
-
-      socket.on('chat message', function(msg){
-        let li =  document.createElement('li');
-        li.innerHTML = msg;
-        document.getElementById('messages').appendChild(li);
-      });
-    </script>
   </head>
   <body>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" />
-      <button onclick="sendChat($event)">Send</button>
+      <button id="sendChat">Send</button>
     </form>
   </body>
+  <script>
+    var socket = io();
+    document.getElementById("sendChat").addEventListener("click", myFunction);
+
+    function myFunction() {
+        alert ("Hello World!");
+        event.preventDefault(); // prevents page reloading
+        socket.emit('chat message', document.getElementById('m').value);
+        document.getElementById('m').value = '';
+        return;
+    }
+
+    socket.on('chat message', function(msg){
+        let li =  document.createElement('li');
+        li.innerHTML = msg;
+        document.getElementById('messages').appendChild(li);
+    });
+  </script>
 </html>
