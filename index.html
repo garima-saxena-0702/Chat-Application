@@ -26,7 +26,6 @@
     document.getElementById("sendChat").addEventListener("click", myFunction);
 
     function myFunction() {
-        alert ("Hello World!");
         event.preventDefault(); // prevents page reloading
         socket.emit('chat message', document.getElementById('m').value);
         document.getElementById('m').value = '';
