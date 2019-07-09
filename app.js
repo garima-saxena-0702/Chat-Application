@@ -1,24 +1,32 @@
 var app = require('express')();
-var http = require('http').createServer(app);
+var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+app.get('/', function(req, res) {
+   res.sendfile('index.html');
 });
 
-io.on('connection', function(socket){
-    console.log('a user connected');
-
-    socket.on('chat message', function(msg){
-        console.log('message: ' + msg);
-        io.emit('chat message', msg);
-    });
-
-    socket.on('disconnect', function(){
-        console.log('user disconnected');
-    });
+users = [];
+var nsp = io.of('/myOpenCommunication');
+nsp.on('connection', function(socket) {
+   console.log('A user connected');
+   socket.on('setUsername', function(data) {
+      console.log(data);
+      
+      if(users.map(function(x){ return x.toUpperCase() }).indexOf(data.toUpperCase()) > -1) {
+         socket.emit('userExists', data + ' username is taken! Try some other username.');
+      } else {
+         users.push(data);
+         socket.emit('userSet', {username: data});
+      }
+   });
+   
+   socket.on('msg', function(data) {
+      //Send message to everyone
+      io.sockets.emit('newmsg', data);
+   })
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(3000, function() {
+   console.log('listening on localhost:3000');
 });
